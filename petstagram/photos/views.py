@@ -1,13 +1,22 @@
 from django.shortcuts import render
 
-
-def add_photo(request):
-    return render(request, template_name="photos/photo-add-page.html")
+from petstagram.photos.models import Photo
 
 
-def photo_details(request):
-    return render(request, template_name="photos/photo-details-page.html")
+def create_photo(request):
+    context = {}
+    return render(request, "photos/create_photo.html", context)
 
 
-def edit_photo(request):
-    return render(request, template_name="photos/photo-edit-page.html")
+def details_photo(request, pk):
+    context = {
+        'pet_photo': Photo.objects.get(pk=pk),
+    }
+
+    return render(request, "photos/details_photo.html", context)
+
+
+def edit_photo(request, pk):
+    context = {}
+
+    return render(request, "photos/edit_photo.html", context)

@@ -1,33 +1,36 @@
-from django.shortcuts import render, redirect, resolve_url
-from pyperclip import copy
+from django.shortcuts import render, redirect
 
 from petstagram.common.models import Like
+from petstagram.pets.models import Pet
 from petstagram.photos.models import Photo
 
 
-def show_home_page(request):
-    all_photos = Photo.objects.all()
+def index(request):
+    pet_name_pattern = request.GET.get('pet_name_pattern', None)
+
+    pet_photos = Photo.objects.all()
+
+    if pet_name_pattern:
+        pet_photos = pet_photos.filter(pets__name__icontains=pet_name_pattern)
 
     context = {
-        "all_photos": all_photos,
+        "pet_photos": pet_photos,
+        "pet_name_pattern": pet_name_pattern,
     }
-    return render(request, template_name="common/home-page.html", context=context)
+
+    return render(request, "common/index.html", context)
 
 
-def like_functionality(request, photo_id):
-    photo = Photo.objects.get(id=photo_id)
-    like_object = Like.objects.filter(to_photo_id=photo_id).first()
+def like_pet_photo(request, pk):
+    # pet_photo_like = PhotoLike.objects.first(pk=pk, user=request.user)
+    pet_photo_like = Like.objects \
+        .filter(pet_photo_id=pk) \
+        .first()
 
-    if like_object:
-        like_object.delete()
+    if pet_photo_like:
+        # dislike
+        pet_photo_like.delete()
     else:
-        like = Like(to_photo=photo)
-        like.save()
+        Like.objects.create(pet_photo_id=pk)
 
-    return redirect(request.META["HTTP_REFERER"] + f"#{photo_id}")
-
-
-def copy_link_to_clipboard(request, photo_id):
-    copy(request.META["HTTP_HOST"] + resolve_url("photo_details", photo_id))
-
-    return redirect(request.META["HTTP_REFERER"] + f"#{photo_id}")
+    return redirect(request.META.get('HTTP_REFERER') + f"#photo-{pk}")

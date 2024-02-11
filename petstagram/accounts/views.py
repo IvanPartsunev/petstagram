@@ -1,25 +1,33 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+def signup_user(request):
+    context = {}
+    return render(request, "accounts/signup_user.html", context)
 
 
-def register(request):
-    return render(request, template_name="accounts/register-page.html")
+def signin_user(request):
+    context = {}
+
+    return render(request, "accounts/signin_user.html", context)
 
 
-def signin(request):
-    return render(request, template_name="accounts/login-page.html")
+def signout_user(request):
+    # signout user
+    return redirect('index')
 
 
-def signout(request):
-    pass
+def details_profile(request, pk):
+    context = {}
 
-
-def show_profile_details(request, pk):
-    return render(request, template_name="accounts/profile-details-page.html")
+    return render(request, "accounts/details_profile.html", context)
 
 
 def edit_profile(request, pk):
-    return render(request, template_name="accounts/profile-edit-page.html")
+    context = {}
+
+    return render(request, "accounts/edit_profile.html", context)
 
 
 def delete_profile(request, pk):
-    return render(request, template_name="accounts/profile-delete-page.html")
+    context = {}
+    return render(request, "accounts/delete_profile.html", context)
